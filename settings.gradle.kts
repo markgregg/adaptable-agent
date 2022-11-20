@@ -1,1 +1,1 @@
-rootProject.name = "adaptable-common"
+rootProject.name = "adaptable-agent"
