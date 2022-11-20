@@ -12,12 +12,6 @@ object TypeDiscoveryMock {
     fun typeDiscoveryMock(): TypeDiscovery {
         val typeDiscovery = mock(TypeDiscovery::class.java)
 
-        whenever(typeDiscovery.getDeclaredControllers()).thenReturn(
-            emptyList()
-        )
-        whenever(typeDiscovery.getDeclaredSocketControllers(any())).thenReturn(
-            emptyMap()
-        )
         whenever(typeDiscovery.getEndPointTypes()).thenReturn(
             mapOf("rest" to RestEndPoint::class.java,
                 "socket" to SocketEndPoint::class.java,
