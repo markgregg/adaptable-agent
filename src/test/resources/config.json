@@ -1,0 +1,22 @@
+{
+    "ports" : [ 8089, 8090 ],
+    "testCaseTimeout" : 1000,
+    "endPoints" : [ {
+        "id" : "test",
+        "type" : "Rest",
+        "properties" : {
+            "port": "9089",
+            "url": "/api/secure",
+            "method": "GET"
+        },
+        "rules" : [ {
+            "@class" : "org.adaptable.common.api.StandardRule",
+            "expression": "$body.field=='test'",
+            "response" : {
+                "@class" : "org.adaptable.common.web.TextResponse",
+                "status" : 200,
+                "body" : "Hello world"
+            }
+        } ]
+    } ]
+}
