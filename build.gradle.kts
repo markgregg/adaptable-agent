@@ -8,9 +8,10 @@ plugins {
 	`maven-publish`
 	signing
 	id("org.jetbrains.dokka") version "1.4.20"
+	jacoco
 }
 
-group = "org.adaptable"
+group = "io.github.markgregg"
 version = "1.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
@@ -33,32 +34,14 @@ val downLoadPackageToken="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"
 repositories {
 	mavenCentral()
 	maven {
-		url = uri("https://maven.pkg.github.com/markgregg/adaptable-expression")
-		credentials {
-			username = downLoadPackageUser
-			password = downLoadPackageToken
-		}
-	}
-	maven {
-		url = uri("https://maven.pkg.github.com/markgregg/adaptable-common")
-		credentials {
-			username = downLoadPackageUser
-			password = downLoadPackageToken
-		}
-	}
-	maven {
-		url = uri("https://maven.pkg.github.com/markgregg/adaptable-common-web")
-		credentials {
-			username = downLoadPackageUser
-			password = downLoadPackageToken
-		}
+		url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots")
 	}
 }
 
 
 dependencies {
-	implementation("org.adaptable:adaptable-common:$adaptableCommon")
-	implementation("org.adaptable:adaptable-common-web:$adaptableCommonWeb")
+	implementation("io.github.markgregg:adaptable-common:$adaptableCommon")
+	implementation("io.github.markgregg:adaptable-common-web:$adaptableCommonWeb")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-websocket")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -69,7 +52,7 @@ dependencies {
 	implementation("io.reactivex.rxjava3:rxkotlin:$rxkotlinVersion")
 	implementation("io.reactivex.rxjava3:rxjava:$rxjavaVersion")
 
-	testImplementation("org.adaptable:adaptable-expression:$adaptableExpression")
+	testImplementation("io.github.markgregg:adaptable-expression:$adaptableExpression")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("io.kotest:kotest-assertions-core-jvm:$kotestVersion")
 	testImplementation("io.kotest:kotest-runner-junit5-jvm:$kotestVersion")
@@ -91,4 +74,24 @@ tasks.withType<Test> {
 tasks.getByName<Jar>("jar") {
 	enabled = true
 	archiveClassifier.set("")
+}
+
+tasks.test {
+	finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
+}
+tasks.jacocoTestReport {
+	dependsOn(tasks.test) // tests are required to run before generating the report
+}
+
+jacoco {
+	toolVersion = "0.8.8"
+	reportsDirectory.set(layout.buildDirectory.dir("customJacocoReportDir"))
+}
+
+tasks.jacocoTestReport {
+	reports {
+		xml.required.set(false)
+		csv.required.set(false)
+		html.outputLocation.set(layout.buildDirectory.dir("jacocoHtml"))
+	}
 }

@@ -10,10 +10,10 @@
             "method": "GET"
         },
         "rules" : [ {
-            "@class" : "org.adaptable.common.api.StandardRule",
+            "@class" : "io.github.markgregg.common.api.StandardRule",
             "expression": "$body.field=='test'",
             "response" : {
-                "@class" : "org.adaptable.common.web.TextResponse",
+                "@class" : "io.github.markgregg.common.web.TextResponse",
                 "status" : 200,
                 "body" : "Hello world"
             }
