@@ -8,7 +8,6 @@ plugins {
 	`maven-publish`
 	signing
 	id("org.jetbrains.dokka") version "1.4.20"
-	jacoco
 }
 
 group = "io.github.markgregg"
@@ -16,6 +15,7 @@ version = "1.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 val projectDescription = "Adaptable common web functionality"
+val githubRepo = "markgregg/adaptable-agent"
 val licenseUrl = "https://opensource.org/licenses/Apache-2.0"
 val licenseName = "Apache 2"
 
@@ -28,16 +28,12 @@ val adaptableExpression = "1.0.0-SNAPSHOT"
 val adaptableCommon = "1.0.0-SNAPSHOT"
 val adaptableCommonWeb = "1.0.1-SNAPSHOT"
 
-val downLoadPackageUser="markgregg"
-val downLoadPackageToken="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"
-
 repositories {
 	mavenCentral()
 	maven {
 		url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots")
 	}
 }
-
 
 dependencies {
 	implementation("io.github.markgregg:adaptable-common:$adaptableCommon")
@@ -76,22 +72,66 @@ tasks.getByName<Jar>("jar") {
 	archiveClassifier.set("")
 }
 
-tasks.test {
-	finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
-}
-tasks.jacocoTestReport {
-	dependsOn(tasks.test) // tests are required to run before generating the report
-}
+publishing {
+	publications {
+		create<MavenPublication>("maven") {
+			groupId = project.group.toString()
+			artifactId = project.name
+			version = project.version.toString()
+			from(components["kotlin"])
+			pom {
+				name.set(project.name)
+				description.set(projectDescription)
+				url.set("https://github.com/$githubRepo")
+				licenses {
+					license {
+						name.set(licenseName)
+						url.set(licenseUrl)
+					}
+				}
+				developers {
+					developer {
+						id.set("markgregg")
+						name.set("Mark Gregg")
+					}
+				}
+				scm {
+					url.set(
+						"https://github.com/$githubRepo.git"
+					)
+					connection.set(
+						"scm:git:git://github.com/$githubRepo.git"
+					)
+					developerConnection.set(
+						"scm:git:git://github.com/$githubRepo.git"
+					)
+				}
+				issueManagement {
+					url.set("https://github.com/$githubRepo/issues")
+				}
+			}
+		}
+	}
+	repositories {
+		maven {
+			name = "mavenStaging"
+			url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+			credentials {
+				username = providers.gradleProperty("ossrhUsername").orElse("Not found").get()
+				password = providers.gradleProperty("ossrhPassword").orElse("Not found").get()
+			}
+		}
+		maven {
+			name = "mavenSnapshots"
+			url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+			credentials {
+				username = providers.gradleProperty("ossrhUsername").orElse("Not found").get()
+				password = providers.gradleProperty("ossrhPassword").orElse("Not found").get()
+			}
+		}
+	}
 
-jacoco {
-	toolVersion = "0.8.8"
-	reportsDirectory.set(layout.buildDirectory.dir("customJacocoReportDir"))
-}
-
-tasks.jacocoTestReport {
-	reports {
-		xml.required.set(false)
-		csv.required.set(false)
-		html.outputLocation.set(layout.buildDirectory.dir("jacocoHtml"))
+	signing {
+		sign(publishing.publications["maven"])
 	}
 }
