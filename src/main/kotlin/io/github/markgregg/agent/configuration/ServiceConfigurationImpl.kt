@@ -82,12 +82,10 @@ class ServiceConfigurationImpl(
         this.socketEndPoints = socketEndPoints
     }
 
-    override fun <T : EndPoint> getEndPoint(id: String, type: Class<T>): T? {
-        return endPoints.values.filterIsInstance(type).firstOrNull { it.id == id }
-    }
+    override fun <T : EndPoint> getEndPoint(id: String, type: Class<T>): T? =
+        endPoints.values.filterIsInstance(type).firstOrNull { it.id == id }
 
-    override fun <T : EndPoint> getEndPoints(type: Class<T>): List<T> {
-        return endPoints.values.filterIsInstance(type)
-    }
+    override fun <T : EndPoint> getEndPoints(type: Class<T>): List<T> =
+        endPoints.values.filterIsInstance(type)
 
 }

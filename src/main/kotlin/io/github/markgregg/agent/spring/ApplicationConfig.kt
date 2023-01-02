@@ -34,17 +34,14 @@ class ApplicationConfig {
     fun serviceConfiguration(
         serviceDefinition: ServiceDefinition,
         typeDiscovery: TypeDiscovery
-    ): ServiceConfiguration {
-        return ServiceConfigurationImpl(serviceDefinition, typeDiscovery)
-    }
+    ): ServiceConfiguration =
+        ServiceConfigurationImpl(serviceDefinition, typeDiscovery)
 
     @Bean
-    fun clientController(serviceConfiguration: ServiceConfiguration ): ClientControllerImpl {
-        return ClientControllerImpl(serviceConfiguration)
-    }
+    fun clientController(serviceConfiguration: ServiceConfiguration ): ClientControllerImpl =
+        ClientControllerImpl(serviceConfiguration)
 
     @Bean
-    fun typeDiscovery(): TypeDiscovery {
-        return TypeDiscoveryImpl()
-    }
+    fun typeDiscovery(): TypeDiscovery =
+        TypeDiscoveryImpl()
 }

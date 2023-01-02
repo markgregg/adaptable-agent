@@ -21,8 +21,6 @@ class WebSocketConfig(
     }
 
     @Bean
-    fun socketHandler(): WebSocketHandler {
-        return WebSocketHandler(serviceConfiguration, clientController)
-    }
-
+    fun socketHandler(): WebSocketHandler =
+        WebSocketHandler(serviceConfiguration, clientController)
 }
